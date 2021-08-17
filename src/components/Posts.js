@@ -1,56 +1,55 @@
 import React, { Component } from "react";
-import { getPosts } from "../utils/api";
-import { DateTime } from "luxon";
+import { getMainPosts } from "../utils/api";
 import Loading from "./Loading";
+import PostList from "./PostList";
+import PropTypes from "prop-types";
 
 export default class Posts extends Component {
   state = {
-    selectedPostType: "topstories",
+    loading: true,
     posts: null,
+    error: null,
+  };
+
+  static propTypes = {
+    type: PropTypes.oneOf(["newstories", "topstories"]),
   };
 
   componentDidMount() {
-    this.updatePosts(this.state.selectedPostType);
+    this.updatePosts();
   }
 
-  updatePosts = (type) => {
-    getPosts(type, 50).then((posts) => {
-      this.setState({ type, posts });
-      // console.log(posts);
+  componentDidUpdate(prevProps) {
+    if (prevProps.type !== this.props.type) {
+      this.updatePosts();
+    }
+  }
+
+  updatePosts = () => {
+    this.setState({
+      posts: null,
+      error: null,
+      loading: true,
     });
+
+    getMainPosts(this.props.type, 50)
+      .then((posts) => {
+        this.setState({ posts, error: null, loading: false });
+      })
+      .catch(({ message }) =>
+        this.setState({ posts: null, error: message, loading: false })
+      );
   };
 
   render() {
-    const { posts, selectedPostType } = this.state;
+    const { posts, error, loading } = this.state;
+
     return (
-      //
-      <ul>
-        {posts ? (
-          posts.map((post) => (
-            <li key={post.id} className="post">
-              <a className="link" href={post.url}>
-                {post.title}
-                <div className="meta-info-light">
-                  <span>
-                    by <a href="/">{post.by}</a>
-                  </span>
-                  <span>
-                    on {DateTime.fromSeconds(post.time).toFormat("D, h:mm a")}
-                  </span>
-                  <span>
-                    with <a href="/">{post.by}</a>
-                  </span>
-                </div>
-              </a>
-            </li>
-          ))
-        ) : (
-          <Loading />
-        )}
-      </ul>
-      // <div>
-      //   <pre>{JSON.stringify(posts, null, 2)}</pre>
-      // </div>
+      <>
+        {error && <p className="center-text error">{error}</p>}
+        {loading && <Loading />}
+        {posts && <PostList posts={posts} />}
+      </>
     );
   }
 }
