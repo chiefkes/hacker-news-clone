@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 
 const styles = {
@@ -10,39 +10,26 @@ const styles = {
   textAlign: "center",
 };
 
-export default class Loading extends Component {
-  state = {
-    text: this.props.text,
-  };
+export default function Loading({ text = "Loading", interval = 300 }) {
+  const [content, setContent] = useState(text);
 
-  static propTypes = {
-    text: PropTypes.string.isRequired,
-    interval: PropTypes.number.isRequired,
-  };
+  useEffect(() => {
+    let id = window.setInterval(() => {
+      setContent((currContent) =>
+        currContent === `${text}...` ? text : `${currContent}.`
+      );
 
-  static defaultProps = {
-    text: "Loading",
-    interval: 300,
-  };
-
-  componentDidMount() {
-    const { interval, text: content } = this.props;
-
-    this.interval = window.setInterval(() => {
-      this.setState(({ text }) => ({
-        text: text === content + "..." ? content : text + ".",
-      }));
+      return () => window.clearInterval(id);
     }, interval);
-  }
+  }, [text, interval]);
 
-  componentWillUnmount() {
-    window.clearInterval(this.interval);
-  }
-
-  render() {
-    return (
-      //
-      <p style={styles}>{this.state.text}</p>
-    );
-  }
+  return (
+    //
+    <p style={styles}>{content}</p>
+  );
 }
+
+Loading.propTypes = {
+  text: PropTypes.string,
+  interval: PropTypes.number,
+};
