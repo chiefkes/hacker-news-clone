@@ -1,5 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import PropTypes from "prop-types";
 
 export default function Header({ title, url = null, id = null }) {
   return url !== null ? (
@@ -12,3 +13,9 @@ export default function Header({ title, url = null, id = null }) {
     </Link>
   );
 }
+
+Header.propTypes = {
+  title: PropTypes.string.isRequired,
+  url: PropTypes.string,
+  id: PropTypes.number,
+};
