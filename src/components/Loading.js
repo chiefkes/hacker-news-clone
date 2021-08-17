@@ -18,9 +18,9 @@ export default function Loading({ text = "Loading", interval = 300 }) {
       setContent((currContent) =>
         currContent === `${text}...` ? text : `${currContent}.`
       );
-
-      return () => window.clearInterval(id);
     }, interval);
+
+    return () => window.clearInterval(id);
   }, [text, interval]);
 
   return (
