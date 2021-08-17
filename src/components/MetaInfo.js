@@ -6,7 +6,7 @@ import { ThemeConsumer } from "../contexts/theme";
 export default function MetaInfo(props) {
   return (
     <ThemeConsumer>
-      {({ theme }) => (
+      {(theme) => (
         <div className={`meta-info-${theme}`}>
           {props.by && (
             <span>
