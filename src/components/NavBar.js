@@ -1,6 +1,7 @@
 import React, { useContext } from "react";
 import { NavLink } from "react-router-dom";
 import ThemeContext from "../contexts/theme";
+import PropTypes from "prop-types";
 
 const activeStyle = {
   color: "rgb(187, 46, 31)",
@@ -37,6 +38,10 @@ export default function NavBar({ toggleTheme }) {
     </nav>
   );
 }
+
+NavBar.propTypes = {
+  toggleTheme: PropTypes.func.isRequired,
+};
 
 /* 
 export default class NavBar extends Component {
